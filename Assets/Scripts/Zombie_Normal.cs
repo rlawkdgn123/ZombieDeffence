@@ -15,7 +15,7 @@ public class Zombie_Normal : MonoBehaviour
     NavMeshAgent nvAgent; // 네비게이터
 
     public float maxHealth = 30;
-    public float curHealth;
+    public float curHealth = 30;
 
     public Collider[] enemyDetectZone;
     Soldier soldier;
@@ -32,64 +32,90 @@ public class Zombie_Normal : MonoBehaviour
         z_AttackPoint = GameObject.Find("DefencePoint");
         attackBasePos = z_AttackPoint.transform.position;
         playerSystem = z_AttackPoint.GetComponent<PlayerSystem>();
-        mat = this.GetComponent<Material>();
+        //mat = this.GetComponent<Material>();
         rigid = this.GetComponent<Rigidbody>();
         nvAgent = this.GetComponent<NavMeshAgent>();
         anim = this.GetComponent<Animator>();
-        
     }
     private void FixedUpdate() {
-        enemyDetectZone = Physics.OverlapBox(this.transform.position + offsetPos, offsetSize / 2, Quaternion.identity) ;
-        //enemyDetect = enemyDetectZone.Length > 0;
-        if (enemyDetect == false)
-        {
-            Walk();
-            FreezeVelocity();
-        }
-        else if (enemyDetect)
-        {
-            foreach (Collider enemyCol in enemyDetectZone)
-            {
-                if (enemyCol.gameObject != gameObject) // 자기 자신은 제외
-                {
-
-
-                }
-            }
-            //Attack();
-        }
-    }
-    void Update() {
         if (curHealth > 0)
         {
-            
+            if (!isAttack)
+            {
+                StartCoroutine("Wait");
+            }
+            FreezeVelocity();
         }
         else
         {
             nvAgent.enabled = false;
             anim.SetTrigger("doDie");
         }
+    }
+    Collider FindClosestEnemy(Collider[] enemy) {
+        Collider closestEnemy = null; // 가장 가까운 콜라이더를 대입
+        float closestDistance = float.MaxValue; // 대입값을 최대치로 할당
 
+        foreach (Collider enemyCol in enemy) // 콜라이더 내부에 들어온 오브젝트 순회
+        {
+            if (enemyCol.gameObject != gameObject) // 본인 오브젝트 제외
+            {
+                float distanceToEnemy = Vector3.Distance(transform.position, enemyCol.transform.position); //적 콜라이더와의 거리 계산
+                if (distanceToEnemy < closestDistance) // 가장 가까운 콜라이더를  closestEnemy에 대입
+                {
+                    closestDistance = distanceToEnemy;
+                    closestEnemy = enemyCol;
+                }
+            }
+        }
+        return closestEnemy;
+    }
+    void Update() {
+        enemyDetectZone = Physics.OverlapBox(this.transform.position + offsetPos, offsetSize / 2, Quaternion.identity);
+        enemyDetect = enemyDetectZone.Length > 0;
+        if (enemyDetect)
+        {
+            Collider closestEnemy = FindClosestEnemy(enemyDetectZone); // 가장 가까운 콜라이더를 대입
+            if (closestEnemy != null) // 콜라이더가 감지되었을 경우
+            {
+                enemyDetect = true;
+                float distanceToEnemy = Vector3.Distance(transform.position, closestEnemy.transform.position); // 가장 가까운 콜라이더의 값과의 거리를 계산
+                float attackThreshold = 2.0f; // 다가가서 정지할 거리 지정
+                if (distanceToEnemy <= attackThreshold) // 해당 거리보다 좁혀질 경우 어택 로직 실행
+                {
+                    Debug.Log("aaa");
+                    StartCoroutine("Attack", closestEnemy);
+                }
+            }
+        }
     }
     void Idle() {
     }
     void Walk() {
-        nvAgent.destination = attackBasePos;
-        anim.SetBool("IsWalk",true);
-    }
-    void Attack() {
-        if (enemyDetect)
+        if (!isAttack)
         {
-            //anim.SetBool("IsWalk", false);
-            nvAgent.SetDestination(transform.position);
-            anim.SetTrigger("DoAttack");
+            
+            nvAgent.SetDestination(attackBasePos);
         }
-
+        anim.SetBool("IsWalk", true);
+    }
+    IEnumerable Attack(Collider closestEnemy) {
+        isAttack = true;
+        anim.SetBool("IsWalk", false);
+        nvAgent.SetDestination(closestEnemy.transform.position);
+        anim.SetTrigger("DoAttack");
+        yield return null;
+    }
+    IEnumerable Wait() {
+        Walk();
+        Debug.Log("이동하고있어요");
+        yield return new WaitForSeconds(1.5f);
+        yield return null;
     }
     void FreezeVelocity() {
         if (isMove)
         {
-            rigid.velocity = Vector3.zero; //회전력과 속도를 0으로 설정함으로써 물리 충돌 시 회전과 속도 문제 해결 
+            rigid.velocity = Vector3.zero; //회전력과 속도를 0으로 설정함으로써 물리 충돌 시 회전과 속도 문제 해결
             rigid.angularVelocity = Vector3.zero;
         }
     }

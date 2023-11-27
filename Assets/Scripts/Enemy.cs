@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
 using UnityEngine;
 using UnityEngine.AI;
-
-public class Soldier : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
+    #region 기즈모 관련
+    [SerializeField] Vector3 size;              //피직스 오버랩박스의 사이즈
+    [SerializeField] Vector3 offset;            //피직스 오버랩박스의 위치
+    [SerializeField] Collider[] cols;           //피직스 오버랩박스로 감지한 Collider 저장소
+    [SerializeField] LayerMask target_layer;    //특정 레이어를 지닌 오브젝트를 감지하기 위한 레이어 마스크
+    #endregion
+
     NavMeshAgent nav;
     Animator anim;
 
@@ -28,17 +31,10 @@ public class Soldier : MonoBehaviour
     [SerializeField] bool isDie;
 
     [SerializeField] GameObject enemy;
-    [SerializeField] Enemy enemyHealth;
-
-    #region 기즈모 관련
-    [SerializeField] Vector3 size;              //피직스 오버랩박스의 사이즈
-    [SerializeField] Vector3 offset;            //피직스 오버랩박스의 위치
-    [SerializeField] Collider[] cols;           //피직스 오버랩박스로 감지한 Collider 저장소
-    [SerializeField] LayerMask target_layer;    //특정 레이어를 지닌 오브젝트를 감지하기 위한 레이어 마스크
-    #endregion
-
-    private void Awake() {
-        Center = GameObject.Find("DefencePointEnemy"); // 처음 시작 시 본진 오브젝트 타겟팅
+    [SerializeField] Soldier enemyHealth;
+    private void Awake()
+    {
+        Center = GameObject.Find("DefencePointTeam"); // 처음 시작 시 본진 오브젝트 타겟팅
         Main_Center = Center.transform; // 본부 트랜스폼 값을 받아놓음
         nav = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
@@ -46,15 +42,12 @@ public class Soldier : MonoBehaviour
         anim.SetBool("IsWalk", true);
     }
 
-    void FixedUpdate() {
+    void FixedUpdate()
+    {
         if (curHealth > 0 && !isDie)
         {
             cols = Physics.OverlapBox(transform.position + offset, size / 2, Quaternion.identity, target_layer);        //target_layer 레이어 마스크를 지닌 오브젝트 감지
 
-            foreach (var col in cols)
-            {
-                UnityEngine.Debug.Log("Detected Collider: " + col.gameObject.name);
-            }
 
             if (now_target == null)             //현재 가장 가까운 플레이어가 없거나, 가까운 플레이어의 Collider가 없다면
                 now_target = temp_target;       //임의로 지정 해 놓은 temp_target로 대처한다
@@ -73,8 +66,7 @@ public class Soldier : MonoBehaviour
                     }
                 }
 
-                enemyHealth = now_target.GetComponent<Enemy>();
-                UnityEngine.Debug.Log(enemyHealth);
+                enemyHealth = now_target.GetComponent<Soldier>();
                 nav.SetDestination(now_target.transform.position);         //위에 과정을 거쳤으면, 가장 가까운 플레이어의 위치를 NavMeshAgent의 목표(바라보는 방향)로 지정한다.
 
 
@@ -122,18 +114,14 @@ public class Soldier : MonoBehaviour
     IEnumerator Attack() {
         while (cols.Length != 0)
         {
-            anim.SetTrigger("DoShoot");
-            if(enemyHealth == null)
-            {
-                UnityEngine.Debug.Log(enemyHealth.attackDamage);
-            }
-            
+            anim.SetTrigger("DoAttack");
             enemyHealth.curHealth -= attackDamage;
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(2f);
         }
     }
-    void OnDrawGizmos() {
-        Gizmos.color = UnityEngine.Color.blue;
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
         Gizmos.DrawWireCube(transform.position + offset, size);
     }
 }

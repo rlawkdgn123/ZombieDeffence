@@ -42,7 +42,8 @@ public class Zombie_Normal : MonoBehaviour
         {
             if (!isAttack)
             {
-                StartCoroutine("Wait");
+                //StartCoroutine("Wait");
+                Walk();
             }
             FreezeVelocity();
         }
@@ -72,7 +73,7 @@ public class Zombie_Normal : MonoBehaviour
     }
     void Update() {
         enemyDetectZone = Physics.OverlapBox(this.transform.position + offsetPos, offsetSize / 2, Quaternion.identity);
-        enemyDetect = enemyDetectZone.Length > 0;
+        enemyDetect = enemyDetectZone.Length > 1;
         if (enemyDetect)
         {
             Collider closestEnemy = FindClosestEnemy(enemyDetectZone); // 가장 가까운 콜라이더를 대입
@@ -80,37 +81,40 @@ public class Zombie_Normal : MonoBehaviour
             {
                 enemyDetect = true;
                 float distanceToEnemy = Vector3.Distance(transform.position, closestEnemy.transform.position); // 가장 가까운 콜라이더의 값과의 거리를 계산
+                Debug.Log(distanceToEnemy);
                 float attackThreshold = 2.0f; // 다가가서 정지할 거리 지정
                 if (distanceToEnemy <= attackThreshold) // 해당 거리보다 좁혀질 경우 어택 로직 실행
                 {
-                    Debug.Log("aaa");
                     StartCoroutine("Attack", closestEnemy);
+                }
+                else
+                {
+                    nvAgent.speed = 5;
                 }
             }
         }
     }
-    void Idle() {
-    }
     void Walk() {
         if (!isAttack)
         {
-            
             nvAgent.SetDestination(attackBasePos);
         }
         anim.SetBool("IsWalk", true);
     }
-    IEnumerable Attack(Collider closestEnemy) {
+    IEnumerator Attack(Collider closestEnemy) {
         isAttack = true;
         anim.SetBool("IsWalk", false);
         nvAgent.SetDestination(closestEnemy.transform.position);
+        nvAgent.speed = 0;
+
         anim.SetTrigger("DoAttack");
-        yield return null;
+        yield return new WaitForSeconds(1.0f);
+        isAttack = false;
     }
-    IEnumerable Wait() {
+    IEnumerator Wait() {
         Walk();
         Debug.Log("이동하고있어요");
         yield return new WaitForSeconds(1.5f);
-        yield return null;
     }
     void FreezeVelocity() {
         if (isMove)

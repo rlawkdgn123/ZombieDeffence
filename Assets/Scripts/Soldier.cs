@@ -46,15 +46,11 @@ public class Soldier : MonoBehaviour
         anim.SetBool("IsWalk", true);
     }
 
-    void FixedUpdate() {
-        if (curHealth > 0 && !isDie)
+    void FixedUpdate() 
         {
-            cols = Physics.OverlapBox(transform.position + offset, size / 2, Quaternion.identity, target_layer);        //target_layer 레이어 마스크를 지닌 오브젝트 감지
-
-            foreach (var col in cols)
+            if (curHealth > 0 && !isDie)
             {
-                UnityEngine.Debug.Log("Detected Collider: " + col.gameObject.name);
-            }
+                cols = Physics.OverlapBox(transform.position + offset, size / 2, Quaternion.identity, target_layer);        //target_layer 레이어 마스크를 지닌 오브젝트 감지
 
             if (now_target == null)             //현재 가장 가까운 플레이어가 없거나, 가까운 플레이어의 Collider가 없다면
                 now_target = temp_target;       //임의로 지정 해 놓은 temp_target로 대처한다
@@ -69,12 +65,11 @@ public class Soldier : MonoBehaviour
 
                     if (temp_distance > now_distance)        //temp_distance의 거리 값 보다 now_distance의 거리 값이 더 작다면
                     {
-                        now_target = t;                      //현재 가장 까가운 물체는 t의 값이므로, now_target(현재 가장 가까운 플레이어를 지정하는 변수) 변수에 지정한다.
+                        now_target = t;                      //현재 가장 가까운 물체는 t의 값이므로, now_target(현재 가장 가까운 플레이어를 지정하는 변수) 변수에 지정한다.
                     }
                 }
 
                 enemyHealth = now_target.GetComponent<Enemy>();
-                UnityEngine.Debug.Log(enemyHealth);
                 nav.SetDestination(now_target.transform.position);         //위에 과정을 거쳤으면, 가장 가까운 플레이어의 위치를 NavMeshAgent의 목표(바라보는 방향)로 지정한다.
 
 
@@ -108,13 +103,14 @@ public class Soldier : MonoBehaviour
                 nav.speed = default_speed;                     //NavMeshAgent의 속도를 미리 저장해 놓은 기본 값으로 돌려놓는다. (속도 값이 제대로 돌아오지 않을 수 있기 때문에 한번 더 써줌)
             }
         }
-        else
+        else // 체력이 1 이상이 아닐 경우
         {
             if (!isDie)
             {
-                isDie = true;
-                StopAllCoroutines();
-                Destroy(gameObject, 2f);
+                isDie = true; // 죽음 상태를 만든다.
+                nav.speed = 0;
+                StopAllCoroutines(); // 진행중인 모든 코루틴을 중단한다.
+                Destroy(gameObject, 2f); // 2초 후 오브젝트를 파괴한다.
                 anim.SetTrigger("DoDie"); // 체력이 없으면 사망 모션 처리
             }
         }
@@ -123,11 +119,7 @@ public class Soldier : MonoBehaviour
         while (cols.Length != 0)
         {
             anim.SetTrigger("DoShoot");
-            if(enemyHealth == null)
-            {
-                UnityEngine.Debug.Log(enemyHealth.attackDamage);
-            }
-            
+            UnityEngine.Debug.Log(enemyHealth);
             enemyHealth.curHealth -= attackDamage;
             yield return new WaitForSeconds(0.5f);
         }

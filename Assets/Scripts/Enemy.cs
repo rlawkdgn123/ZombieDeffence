@@ -62,7 +62,7 @@ public class Enemy : MonoBehaviour
 
                     if (temp_distance > now_distance)        //temp_distance의 거리 값 보다 now_distance의 거리 값이 더 작다면
                     {
-                        now_target = t;                      //현재 가장 까가운 물체는 t의 값이므로, now_target(현재 가장 가까운 플레이어를 지정하는 변수) 변수에 지정한다.
+                        now_target = t;                      //현재 가장 가까운 물체는 t의 값이므로, now_target(현재 가장 가까운 플레이어를 지정하는 변수) 변수에 지정한다.
                     }
                 }
 
@@ -104,9 +104,10 @@ public class Enemy : MonoBehaviour
         {
             if (!isDie)
             {
-                isDie = true;
-                StopAllCoroutines();
-                Destroy(gameObject, 2f);
+                isDie = true; // 죽음 상태를 만든다.
+                nav.speed = 0;
+                StopAllCoroutines(); // 진행중인 모든 코루틴을 중단한다.
+                Destroy(gameObject, 2f); // 2초 후 오브젝트를 파괴한다.
                 anim.SetTrigger("DoDie"); // 체력이 없으면 사망 모션 처리
             }
         }

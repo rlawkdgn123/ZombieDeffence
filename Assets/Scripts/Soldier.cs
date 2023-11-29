@@ -27,7 +27,6 @@ public class Soldier : MonoBehaviour
     [SerializeField] bool isAttack;
     [SerializeField] bool isDie;
 
-    [SerializeField] GameObject enemy;
     [SerializeField] Enemy enemyHealth;
 
     #region 기즈모 관련
@@ -69,7 +68,8 @@ public class Soldier : MonoBehaviour
                     }
                 }
 
-                enemyHealth = now_target.GetComponent<Enemy>();
+                enemyHealth = now_target.gameObject.GetComponent<Enemy>();
+                UnityEngine.Debug.Log(enemyHealth+"1차 확인");
                 nav.SetDestination(now_target.transform.position);         //위에 과정을 거쳤으면, 가장 가까운 플레이어의 위치를 NavMeshAgent의 목표(바라보는 방향)로 지정한다.
 
 
@@ -82,7 +82,7 @@ public class Soldier : MonoBehaviour
                     if (!isAttack) // 공격 중이 아닐 경우
                     {
                         transform.LookAt(now_target.transform.position);
-                        anim.SetBool("IsWalk", false);
+                        //anim.SetBool("IsWalk", false);
                         isAttack = true; // 공격 상태를 활성화한다.
                         StartCoroutine(Attack()); // 공격 코루틴을 호출한다.
                     }

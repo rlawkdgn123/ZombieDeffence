@@ -14,6 +14,7 @@ public class Enemy : MonoBehaviour
     NavMeshAgent nav;
     Animator anim;
 
+    #region 좀비 좌표값
     [SerializeField] GameObject Center;
     [SerializeField] Transform Main_Center;     //본부의 위치 값
 
@@ -22,16 +23,23 @@ public class Enemy : MonoBehaviour
 
     [SerializeField] float default_speed;         //NavMeshAgent의 처음 속도 값을 받아놓기 위한 변수
     [SerializeField] float min_distance;        //플레이어와의 최소 거리 지정 값
+    #endregion
 
+    #region 시작 할당값
     [SerializeField] public float curHealth;
     [SerializeField] public float maxHealth;
     [SerializeField] public float attackDamage;
+    [SerializeField] public GameObject LeftHands;
+    [SerializeField] public GameObject RightHands;
+    #endregion
 
+    #region 상태 구분값
     [SerializeField] bool isAttack;
     [SerializeField] bool isDie;
+    #endregion
 
-    [SerializeField] GameObject enemy;
     [SerializeField] Soldier enemyHealth;
+    
     private void Awake()
     {
         Center = GameObject.Find("DefencePointTeam"); // 처음 시작 시 본진 오브젝트 타겟팅
@@ -66,7 +74,7 @@ public class Enemy : MonoBehaviour
                     }
                 }
 
-                enemyHealth = now_target.GetComponent<Soldier>();
+                enemyHealth = now_target.gameObject.GetComponent<Soldier>();
                 nav.SetDestination(now_target.transform.position);         //위에 과정을 거쳤으면, 가장 가까운 플레이어의 위치를 NavMeshAgent의 목표(바라보는 방향)로 지정한다.
 
 
@@ -115,8 +123,13 @@ public class Enemy : MonoBehaviour
     IEnumerator Attack() {
         while (cols.Length != 0)
         {
+            LeftHands.SetActive(true);
+            RightHands.SetActive(true);
             anim.SetTrigger("DoAttack");
-            enemyHealth.curHealth -= attackDamage;
+            LeftHands.SetActive(false);
+            RightHands.SetActive(false);
+
+
             yield return new WaitForSeconds(2f);
         }
     }
@@ -124,5 +137,14 @@ public class Enemy : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(transform.position + offset, size);
+    }
+    private void OnTriggerExit(Collider other) {
+        if (other != null)
+        {
+            return;
+        }else if(other == now_target)
+        {
+            enemyHealth.curHealth -= attackDamage/2; // 왼손 오른손 2타기 때문에, 2회로 나누어 데미지 입히기
+        }
     }
 }

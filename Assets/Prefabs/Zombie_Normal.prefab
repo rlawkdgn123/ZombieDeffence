@@ -751,8 +751,12 @@ MonoBehaviour:
   curHealth: 50
   maxHealth: 50
   attackDamage: 5
-  LeftHands: {fileID: 9182400986558146396}
-  RightHans: {fileID: 7430330402631752552}
+  Hands:
+  - {fileID: 9182400986558146396}
+  - {fileID: 7430330402631752552}
+  HandsCol:
+  - {fileID: 177481291470913464}
+  - {fileID: 8718602344022557280}
   isAttack: 0
   isDie: 0
   enemyHealth: {fileID: 0}
@@ -1819,7 +1823,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2819330197885014182
 Transform:
   m_ObjectHideFlags: 0
@@ -1845,7 +1849,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.25
+  m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7430953332195505077
 GameObject:
@@ -2171,7 +2175,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5294346624653838575
 Transform:
   m_ObjectHideFlags: 0
@@ -2197,5 +2201,5 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.25
+  m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}

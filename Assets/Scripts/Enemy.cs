@@ -29,10 +29,10 @@ public class Enemy : MonoBehaviour
     [SerializeField] public float curHealth;
     [SerializeField] public float maxHealth;
     [SerializeField] public float attackDamage;
-    [SerializeField] public GameObject LeftHands;
-    [SerializeField] public GameObject RightHands;
+    [SerializeField] public GameObject[] Hands;
+    [SerializeField] public Collider[] HandsCol;
     #endregion
-
+    
     #region 상태 구분값
     [SerializeField] bool isAttack;
     [SerializeField] bool isDie;
@@ -115,7 +115,7 @@ public class Enemy : MonoBehaviour
                 isDie = true; // 죽음 상태를 만든다.
                 nav.speed = 0;
                 StopAllCoroutines(); // 진행중인 모든 코루틴을 중단한다.
-                Destroy(gameObject, 2f); // 2초 후 오브젝트를 파괴한다.
+                Destroy(gameObject, 5f); // 2초 후 오브젝트를 파괴한다.
                 anim.SetTrigger("DoDie"); // 체력이 없으면 사망 모션 처리
             }
         }
@@ -123,14 +123,15 @@ public class Enemy : MonoBehaviour
     IEnumerator Attack() {
         while (cols.Length != 0)
         {
-            LeftHands.SetActive(true);
-            RightHands.SetActive(true);
+            Hands[0].SetActive(true);
+            Hands[1].SetActive(true);
             anim.SetTrigger("DoAttack");
-            LeftHands.SetActive(false);
-            RightHands.SetActive(false);
+            yield return new WaitForSeconds(1.5f);
+            Hands[0].SetActive(false);
+            Hands[1].SetActive(false);
 
 
-            yield return new WaitForSeconds(2f);
+            
         }
     }
     void OnDrawGizmos()
@@ -142,7 +143,7 @@ public class Enemy : MonoBehaviour
         if (other != null)
         {
             return;
-        }else if(other == now_target)
+        }else if(other == now_target && other.tag.Contains("EnemyTeam"))
         {
             enemyHealth.curHealth -= attackDamage/2; // 왼손 오른손 2타기 때문에, 2회로 나누어 데미지 입히기
         }

@@ -47,7 +47,7 @@ public class Soldier : MonoBehaviour
 
     void FixedUpdate() 
         {
-            if (curHealth > 0 && !isDie)
+        if (curHealth > 0 && !isDie)
             {
                 cols = Physics.OverlapBox(transform.position + offset, size / 2, Quaternion.identity, target_layer);        //target_layer 레이어 마스크를 지닌 오브젝트 감지
 
@@ -68,7 +68,7 @@ public class Soldier : MonoBehaviour
                         UnityEngine.Debug.Log(now_target+"asdasdasdsdasd");
                     }
                 }
-
+                UnityEngine.Debug.DrawRay(transform.position, (now_target.transform.position - transform.position).normalized, UnityEngine.Color.green,10);
                 enemyHealth = now_target.gameObject.GetComponent<Enemy>();
                 nav.SetDestination(now_target.transform.position);         //위에 과정을 거쳤으면, 가장 가까운 플레이어의 위치를 NavMeshAgent의 목표(바라보는 방향)로 지정한다.
 
@@ -82,7 +82,17 @@ public class Soldier : MonoBehaviour
                     if (!isAttack) // 공격 중이 아닐 경우
                     {
                         transform.LookAt(now_target.transform.position);
-                        //anim.SetBool("IsWalk", false);
+                        anim.SetBool("IsWalk", false);
+                        
+                        if (Physics.Raycast(transform.position,transform.TransformDirection(Vector3.forward),out RaycastHit hitInfo, 10f))
+                        {
+                            
+                            print("hitSomthing");
+                        }
+                        else
+                        {
+                            print("hitNothing@@");
+                        }
                         isAttack = true; // 공격 상태를 활성화한다.
                         StartCoroutine(Attack()); // 공격 코루틴을 호출한다.
                     }
@@ -127,5 +137,6 @@ public class Soldier : MonoBehaviour
     void OnDrawGizmos() {
         Gizmos.color = UnityEngine.Color.blue;
         Gizmos.DrawWireCube(transform.position + offset, size);
+        
     }
 }

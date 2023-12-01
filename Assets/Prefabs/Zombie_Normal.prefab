@@ -754,6 +754,12 @@ MonoBehaviour:
   isAttack: 0
   isDie: 0
   enemyHealth: {fileID: 0}
+  Hands:
+  - {fileID: 9182400986558146396}
+  - {fileID: 7430330402631752552}
+  HandsCol:
+  - {fileID: 177481291470913464}
+  - {fileID: 8718602344022557280}
 --- !u!1 &3119933965292270617
 GameObject:
   m_ObjectHideFlags: 0
@@ -1812,8 +1818,8 @@ GameObject:
   - component: {fileID: 2819330197885014182}
   - component: {fileID: 8718602344022557280}
   m_Layer: 6
-  m_Name: AttacRight
-  m_TagString: Untagged
+  m_Name: AttackRight
+  m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2165,7 +2171,7 @@ GameObject:
   - component: {fileID: 177481291470913464}
   m_Layer: 6
   m_Name: AttackLeft
-  m_TagString: Untagged
+  m_TagString: Weapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -38,7 +38,9 @@ public class Enemy : MonoBehaviour
     #endregion
 
     [SerializeField] Soldier enemyHealth;
-    
+    [SerializeField] public GameObject[] Hands;
+    [SerializeField] Collider[] HandsCol;
+
     private void Awake()
     {
         Center = GameObject.Find("DefencePointTeam"); // 처음 시작 시 본진 오브젝트 타겟팅
@@ -47,6 +49,7 @@ public class Enemy : MonoBehaviour
         anim = GetComponent<Animator>();
         default_speed = nav.speed;               //NavMeshAgent의 처음 속도 값을 받아놓음
         anim.SetBool("IsWalk", true);
+
     }
 
     void FixedUpdate()
@@ -98,7 +101,7 @@ public class Enemy : MonoBehaviour
             {
                 if (isAttack) // 공격 중일 경우
                 {
-                    isAttack = false; // 공격 상태를 비활성화한다.
+                    isAttack = false; // 공격 상태를 비활성화한다.)
                     StopCoroutine("Attack"); // 공격 코루틴을 중지한다.
                     anim.SetBool("IsWalk", true); // 이동 애니메이션을 재활성화한다.
                 }
@@ -122,12 +125,13 @@ public class Enemy : MonoBehaviour
     IEnumerator Attack() {
         while (cols.Length != 0)
         {
-
+            HandsCol[0].enabled = true;
+            HandsCol[1].enabled = true;
             anim.SetTrigger("DoAttack");
             yield return new WaitForSeconds(1.5f);
+            HandsCol[0].enabled = false;
+            HandsCol[1].enabled = false;
             yield return new WaitForSeconds(1.5f);
-
-
         }
     }
     void OnDrawGizmos()
@@ -139,6 +143,7 @@ public class Enemy : MonoBehaviour
         if (other == now_target && other.tag.Contains("PlayerTeam"))
         {
             enemyHealth.curHealth -= attackDamage / 2; // 왼손 오른손 2타기 때문에, 2회로 나누어 데미지 입히기
+
         }
     }
 }

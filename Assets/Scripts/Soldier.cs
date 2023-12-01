@@ -65,11 +65,11 @@ public class Soldier : MonoBehaviour
                     if (temp_distance > now_distance)        //temp_distance의 거리 값 보다 now_distance의 거리 값이 더 작다면
                     {
                         now_target = t;                      //현재 가장 가까운 물체는 t의 값이므로, now_target(현재 가장 가까운 플레이어를 지정하는 변수) 변수에 지정한다.
+                        UnityEngine.Debug.Log(now_target+"asdasdasdsdasd");
                     }
                 }
 
                 enemyHealth = now_target.gameObject.GetComponent<Enemy>();
-                UnityEngine.Debug.Log(enemyHealth+"1차 확인");
                 nav.SetDestination(now_target.transform.position);         //위에 과정을 거쳤으면, 가장 가까운 플레이어의 위치를 NavMeshAgent의 목표(바라보는 방향)로 지정한다.
 
 

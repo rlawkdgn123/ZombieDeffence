@@ -747,16 +747,10 @@ MonoBehaviour:
   now_target: {fileID: 5820467424898721301}
   temp_target: {fileID: 5820467424898721301}
   default_speed: 0
-  min_distance: 3
+  min_distance: 1.5
   curHealth: 50
   maxHealth: 50
   attackDamage: 5
-  Hands:
-  - {fileID: 9182400986558146396}
-  - {fileID: 7430330402631752552}
-  HandsCol:
-  - {fileID: 177481291470913464}
-  - {fileID: 8718602344022557280}
   isAttack: 0
   isDie: 0
   enemyHealth: {fileID: 0}

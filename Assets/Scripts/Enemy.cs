@@ -29,8 +29,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] public float curHealth;
     [SerializeField] public float maxHealth;
     [SerializeField] public float attackDamage;
-    [SerializeField] public GameObject[] Hands;
-    [SerializeField] public Collider[] HandsCol;
+
     #endregion
     
     #region 상태 구분값
@@ -123,15 +122,12 @@ public class Enemy : MonoBehaviour
     IEnumerator Attack() {
         while (cols.Length != 0)
         {
-            Hands[0].SetActive(true);
-            Hands[1].SetActive(true);
+
             anim.SetTrigger("DoAttack");
             yield return new WaitForSeconds(1.5f);
-            Hands[0].SetActive(false);
-            Hands[1].SetActive(false);
+            yield return new WaitForSeconds(1.5f);
 
 
-            
         }
     }
     void OnDrawGizmos()
@@ -140,12 +136,9 @@ public class Enemy : MonoBehaviour
         Gizmos.DrawWireCube(transform.position + offset, size);
     }
     private void OnTriggerExit(Collider other) {
-        if (other != null)
+        if (other == now_target && other.tag.Contains("PlayerTeam"))
         {
-            return;
-        }else if(other == now_target && other.tag.Contains("EnemyTeam"))
-        {
-            enemyHealth.curHealth -= attackDamage/2; // 왼손 오른손 2타기 때문에, 2회로 나누어 데미지 입히기
+            enemyHealth.curHealth -= attackDamage / 2; // 왼손 오른손 2타기 때문에, 2회로 나누어 데미지 입히기
         }
     }
 }

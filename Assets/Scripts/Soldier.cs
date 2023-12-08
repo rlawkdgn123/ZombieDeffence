@@ -68,7 +68,7 @@ public class Soldier : MonoBehaviour
                         UnityEngine.Debug.Log(now_target+"asdasdasdsdasd");
                     }
                 }
-                UnityEngine.Debug.DrawRay(transform.position, (now_target.transform.position - transform.position).normalized, UnityEngine.Color.green,10);
+                UnityEngine.Debug.DrawRay(transform.position,Vector3.forward*10, UnityEngine.Color.green);
                 enemyHealth = now_target.gameObject.GetComponent<Enemy>();
                 nav.SetDestination(now_target.transform.position);         //위에 과정을 거쳤으면, 가장 가까운 플레이어의 위치를 NavMeshAgent의 목표(바라보는 방향)로 지정한다.
 
